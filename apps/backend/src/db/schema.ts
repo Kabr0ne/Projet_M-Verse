@@ -3,7 +3,7 @@ import { pgTable, uuid, text, varchar, timestamp, unique, doublePrecision } from
 export const users = pgTable('users', {
   id: uuid('id').primaryKey().defaultRandom(),
   username: varchar('username', { length: 255 }).notNull().unique(),
-  password: varchar('password', { length: 255 }).notNull(),
+  password: text('password').notNull(),
   email: varchar('email', { length: 255 }).notNull().unique(),
   createdAt: timestamp('created_at').defaultNow(),
 });
