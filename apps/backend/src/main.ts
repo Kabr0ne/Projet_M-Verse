@@ -14,9 +14,19 @@ async function bootstrap() {
   }));
 
   const config = new DocumentBuilder()
-    .setTitle('Backend API')
-    .setDescription('API for the Backend application')
+    .setTitle('M-Verse API')
+    .setDescription('Documentation de l\'API M-Verse')
     .setVersion('1.0')
+    .addTag('Authentication', 'Endpoints for user authentication and management')
+    .addBearerAuth({
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'JWT',
+        description: 'Entrez votre token JWT',
+        in: 'header',
+      },
+      'JWT-authorization',)
     .build();
 
     const documentFactory = () => SwaggerModule.createDocument(app, config);

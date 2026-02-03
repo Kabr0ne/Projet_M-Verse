@@ -1,13 +1,17 @@
-import { Injectable, ConflictException, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, ConflictException, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
 import { DrizzleService } from '../db/drizzle.service';
 import { users } from '../db/schema';
 import { eq } from 'drizzle-orm'; //Entity Manager
 import * as bcrypt from 'bcrypt';
+import { JwtService } from '@nestjs/jwt'; //JWT Manager
 
 @Injectable()
 export class AuthService {
 
-    constructor(private readonly drizzleService: DrizzleService) {}
+    constructor(
+        private readonly drizzleService: DrizzleService,
+        private readonly jwtService: JwtService,
+    ) {}
 
     async registerUser(username: string, email: string, password: string){
 
@@ -37,6 +41,29 @@ export class AuthService {
             throw new InternalServerErrorException('Error trying to create new user'); 
         }
     }
+
+    async loginUser(email: string, password: string){
+
+        //Check User Exist
+        const [UserExist] = await this.drizzleService.db.select().from(users).where(eq(users.email, email));
+        if (!UserExist){
+            throw new UnauthorizedException('Invalid login/password, maybe you need to register ?');
+        }
+
+        //Check Password
+        const MatchPassword = await bcrypt.compare(password, UserExist.password);
+        if (!MatchPassword){
+            throw new UnauthorizedException('Invalid login/password, maybe you need to register ?');
+        }
+
+        const response = { userID : UserExist.id, username: UserExist.username };
+
+        return {
+            access_token: this.jwtService.sign(response),
+            user: response
+        };
+    }
+    
 
         
 }
