@@ -36,6 +36,8 @@ services:
       - mverse-network
     ports:
       - "3000:3000"
+    env_file:
+      - .env
     environment:
       DATABASE_URL: postgresql://${DB_USER:-admin}:${DB_PASSWORD:-password123}@db:5432/${DB_NAME:-mverse_db}
     volumes:
