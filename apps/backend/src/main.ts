@@ -18,6 +18,7 @@ async function bootstrap() {
     .setDescription('Documentation de l\'API M-Verse')
     .setVersion('1.0')
     .addTag('Authentication', 'Endpoints for user authentication and management')
+    .addTag('Media', 'Endpoints for managing media logs and activities')
     .addBearerAuth({
         type: 'http',
         scheme: 'bearer',

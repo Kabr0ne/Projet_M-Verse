@@ -2,7 +2,8 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { DrizzleService } from '../db/drizzle.service';
 import { media, activityLogs } from '../db/schema';
 import { addLogDTO } from './DTO/add_log.dto';
-import { eq, desc } from 'drizzle-orm';
+import { updateLogDTO } from './DTO/update_log.dto';
+import { eq, desc, and } from 'drizzle-orm';
 
 
 @Injectable()
@@ -51,6 +52,42 @@ export class MediaService {
             console.error('Error adding log:', error);
             throw new InternalServerErrorException('Failed to add log');
         }
+    }
+
+    async updateLog(userId: string, logId: string, logData: updateLogDTO) {
+        const [UpdatedLog] = await this.drizzle.db.update(activityLogs)
+            .set(logData)
+            .where(and(
+                eq(activityLogs.id, logId),
+                eq(activityLogs.userId, userId)
+            ))
+            .returning();
+
+        if (!UpdatedLog) {
+            throw new InternalServerErrorException('Failed to update log or log not found');
+        }
+
+        return {
+            message: 'Log updated successfully',
+            log: UpdatedLog
+        };
+    }
+
+
+    async deleteLog(userId: string, logId: string) {
+        const [deletedlog] = await this.drizzle.db.delete(activityLogs)
+            .where(and(
+                eq(activityLogs.id, logId),
+                eq(activityLogs.userId, userId)
+            )).returning();
+
+        if (!deletedlog) {
+            throw new InternalServerErrorException('Failed to delete log or log not found');
+        }
+
+        return {
+            message: 'Log deleted successfully',
+        };
     }
 
     async getUserLogs(userId: string) {
