@@ -1,4 +1,4 @@
-import { pgTable, uuid, text, varchar, timestamp, unique, doublePrecision } from 'drizzle-orm/pg-core';
+import { pgTable, uuid, text, varchar, timestamp, unique, doublePrecision, boolean } from 'drizzle-orm/pg-core';
 
 export const users = pgTable('users', {
   id: uuid('id').primaryKey().defaultRandom(),
@@ -25,5 +25,8 @@ export const activityLogs = pgTable('activity_logs', {
   mediaId: uuid('media_id').references(() => media.id).notNull(),
   status: varchar('status'),
   rating: doublePrecision('rating'),
+  comment: text('comment'),
+  rewatched: boolean('rewatched'),
+  liked: boolean('liked'),
   createdAt: timestamp('created_at').defaultNow(),
 });
