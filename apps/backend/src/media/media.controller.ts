@@ -4,14 +4,14 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { Controller } from '@nestjs/common';
 import { MediaService } from './media.service';
 import { addLogDTO } from './DTO/add_log.dto';
-import { OmdbService } from './omdb/omdb.service';
+import { TmdbService } from './tmdb/tmdb.service';
 import { updateLogDTO } from './DTO/update_log.dto';
 
 @ApiTags('Media')
 
 @Controller('media')
 export class MediaController {
-    constructor(private readonly mediaService: MediaService, private readonly omdbService: OmdbService) {}
+    constructor(private readonly mediaService: MediaService, private readonly tmdbService: TmdbService) {}
 
 
     //Activity Log Endpoints
@@ -52,10 +52,10 @@ export class MediaController {
     }
 
     //External API Endpoints
-    @Get('search/omdb')
-    @ApiOperation({ summary: 'Search for movies using the OMDB API' })
-    async searchOMDB(@Query('title') title: string) {
-        return this.omdbService.searchOMDB(title);
+    @Get('search/tmdb')
+    @ApiOperation({ summary: 'Search for movies using the TMDB API' })
+    async searchTMDB(@Query('title') title: string) {
+        return this.tmdbService.searchMovies(title);
     }
 
 

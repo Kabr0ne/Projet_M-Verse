@@ -4,11 +4,11 @@ import { IsString, IsNumber, IsOptional, Min, Max, IsBoolean } from 'class-valid
 @ApiSchema({ description: 'Rules for adding a log' })
 export class addLogDTO {
     //Media
-    @ApiProperty({ example: 'tt3896198', description: 'external ID from provider' })
+    @ApiProperty({ example: '643586', description: 'external ID from provider' })
     @IsString()
     externalId: string;
 
-    @ApiProperty({ example: 'OMDB', description: 'Provider of the media (OMDB, RAWG, LASTFM)' })
+    @ApiProperty({ example: 'TMDB', description: 'Provider of the media (TMDB, RAWG, LASTFM)' })
     @IsString()
     provider: string;
 
@@ -20,7 +20,7 @@ export class addLogDTO {
     @IsString()
     title: string;
 
-    @ApiProperty({ example: 'https://m.media-amazon.com/images/M/MV5BOGUxOTQ4ZjItOTExNi00MzIzLTkzMTUtMjkxNDFiNTUzM2U0XkEyXkFqcGc@._V1_SX300.jpg', description: 'URL of the media poster' })
+    @ApiProperty({ example: 'https://image.tmdb.org/t/p/w500/keEnkeAvifw8NSEC4f6WsqeLJgF.jpg', description: 'URL of the media poster' })
     @IsString()
     posterUrl?: string;
 
