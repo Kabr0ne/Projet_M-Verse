@@ -5,8 +5,9 @@ import { addLogDTO } from './DTO/add_log.dto';
 import { updateLogDTO } from './DTO/update_log.dto';
 import { createListDTO } from './DTO/create_list.dto';
 import { addMediaToListDTO } from './DTO/add_media_list.dto';
-import { eq, desc, and } from 'drizzle-orm';
+import { eq, desc, and, sql, is } from 'drizzle-orm';
 import { TmdbService } from './tmdb/tmdb.service';
+import { log } from 'console';
 
 
 @Injectable()
@@ -72,12 +73,21 @@ export class MediaService {
         try {
             const validMedia = await this.checkMediaValidity(logData);
             const Media = await this.UpsertMedia(logData, validMedia);
+
+
+            const existingLog = await this.drizzle.db.select({id: activityLogs.id})
+                .from(activityLogs)
+                .where(and(eq(activityLogs.userId, userId),eq(activityLogs.mediaId, Media.id)))
+                .limit(1);
+            const alreadyExists = existingLog.length > 0;
+
+
             const NewLog = await this.drizzle.db.insert(activityLogs)
                 .values({
                     userId: userId,
                     mediaId: Media.id,
                     status: logData.status,
-                    rewatched: logData.rewatched,
+                    rewatched: alreadyExists ? true : logData.rewatched,
                     liked: logData.liked,
                     rating: logData.rating,
                     comment: logData.comment,
@@ -87,7 +97,8 @@ export class MediaService {
             return {
                 message: 'Log added successfully',
                 log: NewLog,
-                media: Media
+                media: Media,
+                isRewatch: alreadyExists
             };
         } catch (error) {
             console.error('Error adding log:', error);
@@ -240,5 +251,34 @@ export class MediaService {
         return {message: 'List deleted successfully'};
     }
 
+    async getStatsByType(userId: string, mediaType: string) {
+        const result = await this.drizzle.db.select({
+            count: sql<number>`count(${activityLogs.id})`,
+            avgRating: sql<number>`round(avg(${activityLogs.rating})::numeric, 1)`,
+            totalRuntime: sql<number>`sum(${media.runtime})`,
+        })
+        .from(activityLogs)
+        .innerJoin(media, eq(activityLogs.mediaId, media.id))
+        .where(
+            and(
+            eq(activityLogs.userId, userId),
+            eq(media.type, mediaType.toUpperCase())
+            )
+        );
 
-}
+        const stats = result[0];
+        const totalMinutes = Number(stats.totalRuntime) || 0;
+
+        return {
+            type: mediaType.toUpperCase(),
+            totalItems: Number(stats.count) || 0,
+            averageRating: Number(stats.avgRating) || 0,
+            timeSpent: {
+            minutes: totalMinutes,
+            hours: Math.floor(totalMinutes / 60),
+            label: mediaType.toUpperCase() === 'GAME' ? 'jouées' : 'visionnées'
+            }
+        };
+    } 
+}                                      
+

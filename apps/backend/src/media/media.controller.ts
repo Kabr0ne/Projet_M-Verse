@@ -6,7 +6,6 @@ import { MediaService } from './media.service';
 import { addLogDTO } from './DTO/add_log.dto';
 import { TmdbService } from './tmdb/tmdb.service';
 import { updateLogDTO } from './DTO/update_log.dto';
-import { get } from 'axios';
 import { createListDTO } from './DTO/create_list.dto';
 import { addMediaToListDTO } from './DTO/add_media_list.dto';
 
@@ -121,6 +120,15 @@ export class MediaController {
     async removeMediaFromList(@Request() req, @Query('id') listId: string, @Query('mediaId') mediaId: string) {
         const userId = req.user.userId; //From JWT payload
         return this.mediaService.removeMediaFromList(userId, listId, mediaId);
+    }
+
+    @Get('stats/:mediaType')
+    @ApiBearerAuth('JWT-authorization')
+    @UseGuards(AuthGuard('jwt'))
+    @ApiOperation({ summary: 'Get statistics for a specific media type' })
+    async getStats(@Request() req, @Query('mediaType') mediaType: string) {
+        const userId = req.user.userId; //From JWT payload
+        return this.mediaService.getStatsByType(userId, mediaType);
     }
 
 }
