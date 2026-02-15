@@ -1,8 +1,8 @@
 import { ApiProperty, ApiSchema } from '@nestjs/swagger';
 import { IsString, IsNumber, IsOptional, Min, Max, IsBoolean } from 'class-validator';
 
-@ApiSchema({ description: 'Rules for adding a log' })
-export class addLogDTO {
+@ApiSchema({ description: 'Rules for adding a media item to a list' })
+export class addMediaToListDTO {
     //Media
     @ApiProperty({ example: '643586', description: 'external ID from provider' })
     @IsString()

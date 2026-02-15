@@ -7,6 +7,8 @@ import { addLogDTO } from './DTO/add_log.dto';
 import { TmdbService } from './tmdb/tmdb.service';
 import { updateLogDTO } from './DTO/update_log.dto';
 import { get } from 'axios';
+import { createListDTO } from './DTO/create_list.dto';
+import { addMediaToListDTO } from './DTO/add_media_list.dto';
 
 @ApiTags('Media')
 
@@ -63,6 +65,62 @@ export class MediaController {
     @ApiOperation({ summary: 'Get details for a specific movie using an TMDB ID' })
     async getMovieDetails(@Query('externalId') externalId: string) {
         return this.tmdbService.getMovieDetails(externalId);
+    }
+
+
+    //List Endpoints
+    @Post('lists')
+    @ApiBearerAuth('JWT-authorization')
+    @UseGuards(AuthGuard('jwt'))
+    @ApiOperation({ summary: 'Create a new list' })
+    async createList(@Request() req, @Body() listDto: createListDTO) {
+        const userId = req.user.userId; //From JWT payload
+        return this.mediaService.createList(userId, listDto);
+    }
+
+    @Get('lists')
+    @ApiBearerAuth('JWT-authorization')
+    @UseGuards(AuthGuard('jwt'))
+    @ApiOperation({ summary: 'Get all lists for the authenticated user' })
+    async getUserLists(@Request() req) {
+        const userId = req.user.userId; //From JWT payload
+        return this.mediaService.getUserLists(userId);
+    }
+
+    @Get('lists/:id')
+    @ApiBearerAuth('JWT-authorization')
+    @UseGuards(AuthGuard('jwt'))
+    @ApiOperation({ summary: 'Get details for a specific list by ID' })
+    async getListDetails(@Request() req, @Query('id') listId: string) {
+        const userId = req.user.userId; //From JWT payload
+        return this.mediaService.getListItems(userId, listId);
+    }
+
+    @Delete('lists/:id')
+    @ApiBearerAuth('JWT-authorization')
+    @UseGuards(AuthGuard('jwt'))
+    @ApiOperation({ summary: 'Delete a specific list by ID' })
+    async deleteList(@Request() req, @Query('id') listId: string) {
+        const userId = req.user.userId; //From JWT payload
+        return this.mediaService.deleteList(userId, listId);
+    }
+
+    @Post('lists/:id/add')
+    @ApiBearerAuth('JWT-authorization')
+    @UseGuards(AuthGuard('jwt'))
+    @ApiOperation({ summary: 'Add a media item to a specific list by ID' })
+    async addMediaToList(@Request() req, @Query('id') listId: string, @Body() addMediaDto: addMediaToListDTO) {
+        const userId = req.user.userId; //From JWT payload
+        return this.mediaService.addMediaToList(userId, listId, addMediaDto);
+    }
+
+    @Delete('lists/:id/media/:mediaId')
+    @ApiBearerAuth('JWT-authorization')
+    @UseGuards(AuthGuard('jwt'))
+    @ApiOperation({ summary: 'Remove a media item from a specific list by ID' })
+    async removeMediaFromList(@Request() req, @Query('id') listId: string, @Query('mediaId') mediaId: string) {
+        const userId = req.user.userId; //From JWT payload
+        return this.mediaService.removeMediaFromList(userId, listId, mediaId);
     }
 
 }

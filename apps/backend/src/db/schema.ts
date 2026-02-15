@@ -45,6 +45,7 @@ export const lists = pgTable('lists', {
   name: varchar('name', { length: 255 }).notNull(),
   description: text('description'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
+  isPublic: boolean('is_public').default(false).notNull(),
 });
 
 export const listItems = pgTable('list_items', {
