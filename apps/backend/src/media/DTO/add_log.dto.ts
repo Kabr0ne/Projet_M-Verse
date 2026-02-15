@@ -49,4 +49,12 @@ export class addLogDTO {
     @IsString()
     comment?: string;
 
+    @ApiProperty({ example: 120, description: 'Runtime of the media in minutes' })
+    @IsNumber()
+    runtime: number;
+
+    @ApiProperty({ example: 'Action, Adventure, Comedy', description: 'Genres of the media' })
+    @IsString()
+    genres: string;
+
 }

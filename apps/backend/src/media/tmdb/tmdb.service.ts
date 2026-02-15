@@ -29,4 +29,21 @@ export class TmdbService {
             posterUrl: movie.poster_path,
         }));
     }
+    
+    async getMovieDetails(externalId: string) {
+        const url = `${this.apiUrl}movie/${externalId}?language=null`;
+        const { data } = await firstValueFrom(
+            this.httpService.get(url, { headers: this.headers }),
+        );
+        return {
+            externalId: data.id,
+            provider: 'TMDB',
+            type: 'MOVIE',
+            title: data.title,
+            posterUrl: data.poster_path,
+            runtime: data.runtime,
+            genres: data.genres.map((g) => g.name).join(', '),
+            plot: data.overview,
+        };
+    }
 }

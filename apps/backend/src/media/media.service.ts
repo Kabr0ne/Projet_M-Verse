@@ -20,12 +20,16 @@ export class MediaService {
                     type: logData.type,
                     title: logData.title,
                     posterUrl: logData.posterUrl,
+                    runtime: logData.runtime,
+                    genres: logData.genres,
                 })
                 .onConflictDoUpdate({
                     target: [media.externalId, media.provider],
                     set: {
                         title: logData.title,
                         posterUrl: logData.posterUrl,
+                        runtime: logData.runtime,
+                        genres: logData.genres,
                     },
                 })
                 .returning();

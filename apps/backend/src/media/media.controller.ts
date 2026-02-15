@@ -6,6 +6,7 @@ import { MediaService } from './media.service';
 import { addLogDTO } from './DTO/add_log.dto';
 import { TmdbService } from './tmdb/tmdb.service';
 import { updateLogDTO } from './DTO/update_log.dto';
+import { get } from 'axios';
 
 @ApiTags('Media')
 
@@ -58,5 +59,10 @@ export class MediaController {
         return this.tmdbService.searchMovies(title);
     }
 
+    @Get('movie/tmdb/:externalId')
+    @ApiOperation({ summary: 'Get details for a specific movie using an TMDB ID' })
+    async getMovieDetails(@Query('externalId') externalId: string) {
+        return this.tmdbService.getMovieDetails(externalId);
+    }
 
 }
