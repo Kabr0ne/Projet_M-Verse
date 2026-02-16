@@ -1,10 +1,7 @@
-import { Post, UseGuards, Body, Request, Get, Query, Patch, Delete} from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
-import { ApiBearerAuth, ApiOperation, ApiTags } from "@nestjs/swagger";
+import { Get, Query } from '@nestjs/common';
+import { ApiOperation, ApiTags } from "@nestjs/swagger";
 import { Controller } from '@nestjs/common';
 import { TmdbService } from './tmdb/tmdb.service';
-import { createListDTO } from './DTO/create_list.dto';
-import { addMediaToListDTO } from './DTO/add_media_list.dto';
 
 
 @ApiTags('Search')

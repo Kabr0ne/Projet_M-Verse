@@ -1,6 +1,6 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { DrizzleService } from '../db/drizzle.service';
-import { media, activityLogs, lists, listItems, } from '../db/schema';
+import { media, activityLogs, lists, listItems, userMediaCollections, } from '../db/schema';
 import { addLogDTO } from './DTO/add_log.dto';
 import { updateLogDTO } from './DTO/update_log.dto';
 import { createListDTO } from './DTO/create_list.dto';
@@ -75,14 +75,15 @@ export class MediaService {
             const Media = await this.UpsertMedia(logData, validMedia);
 
 
-            const existingLog = await this.drizzle.db.select({id: activityLogs.id})
-                .from(activityLogs)
-                .where(and(eq(activityLogs.userId, userId),eq(activityLogs.mediaId, Media.id)))
+            const [existingLog] = await this.drizzle.db.select()
+                .from(userMediaCollections)
+                .where(and(eq(userMediaCollections.userId, userId),eq(userMediaCollections.mediaId, Media.id)))
                 .limit(1);
-            const alreadyExists = existingLog.length > 0;
 
+            const alreadyExists = existingLog?.status === 'WATCHED' || existingLog?.status === 'PLAYED' || existingLog?.status === 'COMPLETED';
 
-            const NewLog = await this.drizzle.db.insert(activityLogs)
+ 
+            const [NewLog] = await this.drizzle.db.insert(activityLogs)
                 .values({
                     userId: userId,
                     mediaId: Media.id,
@@ -93,6 +94,26 @@ export class MediaService {
                     comment: logData.comment,
                 })
                 .returning();
+
+            await this.drizzle.db.insert(userMediaCollections)
+                .values({
+                    userId: userId,
+                    mediaId: Media.id,
+                    status: logData.status,
+                    rating: logData.rating,
+                    comment: logData.comment,
+                    updatedAt: new Date(),
+                })
+                .onConflictDoUpdate({
+                    target: [userMediaCollections.userId, userMediaCollections.mediaId],
+                    set: {
+                        status: logData.status,
+                        rating: logData.rating,
+                        comment: logData.comment,
+                        updatedAt: new Date(),
+                    },
+                }).returning();
+            
 
             return {
                 message: 'Log added successfully',
@@ -280,5 +301,49 @@ export class MediaService {
             }
         };
     } 
+
+    //Collecton methods
+    async UpdateCollectionStatus(userId: string, addMediaDto: addMediaToListDTO, status: string) {
+        const validMedia = await this.checkMediaValidity(addMediaDto);
+        const Media = await this.UpsertMedia(addMediaDto, validMedia);
+
+        return this.drizzle.db.insert(userMediaCollections)
+            .values({
+                userId: userId,
+                mediaId: Media.id,
+                status: status,
+                updatedAt: new Date(),
+            })
+            .onConflictDoUpdate({
+                target: [userMediaCollections.userId, userMediaCollections.mediaId],
+                set: {
+                    status: status,
+                    updatedAt: new Date(),
+                },
+            })
+            .returning();
+    }
+
+    async getMyCollection(userId: string) {
+        return this.drizzle.db.select({
+            id: userMediaCollections.id,
+            status: userMediaCollections.status,
+            rating: userMediaCollections.rating,
+            comment: userMediaCollections.comment,
+            updatedAt: userMediaCollections.updatedAt,
+            MediaInfo: {
+                id: media.id,
+                title: media.title,
+                posterUrl: media.posterUrl,
+                type: media.type,
+                provider: media.provider,
+                externalId: media.externalId,
+            }
+        })
+        .from(userMediaCollections)
+        .innerJoin(media, eq(userMediaCollections.mediaId, media.id))
+        .where(eq(userMediaCollections.userId, userId))
+        .orderBy(desc(userMediaCollections.updatedAt));
+    }
 }                                      
 
