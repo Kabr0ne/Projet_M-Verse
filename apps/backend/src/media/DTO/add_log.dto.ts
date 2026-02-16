@@ -16,14 +16,6 @@ export class addLogDTO {
     @IsString()
     type: string;
 
-    @ApiProperty({ example: "Willy's Wonderland", description: 'Title of the media' })
-    @IsString()
-    title: string;
-
-    @ApiProperty({ example: 'https://image.tmdb.org/t/p/w500/keEnkeAvifw8NSEC4f6WsqeLJgF.jpg', description: 'URL of the media poster' })
-    @IsString()
-    posterUrl?: string;
-
     //Activity_Log
     @ApiProperty({ example: 'WATCHED', description: 'Status of the media (WATCHED, COMPLETED)' })
     @IsString()
@@ -48,13 +40,5 @@ export class addLogDTO {
     @IsOptional()
     @IsString()
     comment?: string;
-
-    @ApiProperty({ example: 90, description: 'Runtime of the media in minutes' })
-    @IsNumber()
-    runtime: number;
-
-    @ApiProperty({ example: 'Action, Adventure, Comedy, Horror', description: 'Genres of the media' })
-    @IsString()
-    genres: string;
 
 }

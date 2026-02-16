@@ -13,7 +13,7 @@ import { MediaService } from './media.service';
 export class StatsController {
     constructor(private readonly mediaService: MediaService) {}
 
-    @Get('stats/:mediaType')
+    @Get(':mediaType')
     @ApiOperation({ summary: 'Get statistics for a specific media type' })
     async getStats(@Request() req, @Query('mediaType') mediaType: string) {
         const userId = req.user.userId; //From JWT payload

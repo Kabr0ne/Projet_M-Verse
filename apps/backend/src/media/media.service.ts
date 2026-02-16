@@ -18,10 +18,10 @@ export class MediaService {
     //Core funcitons for Upserting media
     async checkMediaValidity(addMediaDto: addMediaToListDTO | addLogDTO) {
         //Currently only supports TMDB, need to be expanded to support RAWG and LASTFM in the future
-        let title: string = addMediaDto.title;
-        let posterUrl: string | null = addMediaDto.posterUrl || null;
-        let runtime: number = addMediaDto.runtime;
-        let genres: string = addMediaDto.genres;
+        let title: string;
+        let posterUrl: string | null;
+        let runtime: number;
+        let genres: string;
 
         switch (addMediaDto.provider) {
             case 'TMDB':
