@@ -18,6 +18,7 @@ async function bootstrap() {
     .setDescription('Documentation de l\'API M-Verse')
     .setVersion('1.0')
     .addTag('Authentication', 'Endpoints for user authentication and management')
+    .addTag('Collection', 'Endpoints for managing user media collection')
     .addTag('Log', 'Endpoints for managing activity logs')
     .addTag('List', 'Endpoints for managing media lists and collections')
     .addTag('Search', 'Endpoints for searching media using external APIs like TMDB')

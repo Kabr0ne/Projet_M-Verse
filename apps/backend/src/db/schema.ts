@@ -34,7 +34,7 @@ export const activityLogs = pgTable('activity_logs', {
   rewatched: boolean('rewatched'),
   liked: boolean('liked'),
   createdAt: timestamp('created_at').defaultNow(),
-  watchedAt: timestamp('watched_at'),
+  watchedAt: timestamp('watched_at').defaultNow(),
 });
 
 
@@ -53,3 +53,15 @@ export const listItems = pgTable('list_items', {
   listId: uuid('list_id').references(() => lists.id, { onDelete: 'cascade' }).notNull(),
   mediaId: uuid('media_id').references(() => media.id, { onDelete: 'cascade' }).notNull(),
 });
+
+export const userMediaCollections = pgTable('user_media_collections', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  userId: uuid('user_id').references(() => users.id).notNull(),
+  mediaId: uuid('media_id').references(() => media.id).notNull(),
+  status: varchar('status'),
+  rating: doublePrecision('rating'),
+  comment: text('comment'),
+  updatedAt: timestamp('updated_at').defaultNow(),
+}, (t) => ({
+  unq: unique().on(t.userId, t.mediaId),
+}));

@@ -6,13 +6,15 @@ import { LogController } from './log.controller';
 import { StatsController } from './stats.controller';
 import { ListController } from './list.controller';
 import { SearchController } from './search.controller';
+import { CollectionController } from './collection.controller';
 
 @Module({
   controllers: [
     LogController,
     SearchController,
     ListController,
-    StatsController
+    StatsController,
+    CollectionController
   ],
   providers: [MediaService, TmdbService], 
   imports: [HttpModule],
