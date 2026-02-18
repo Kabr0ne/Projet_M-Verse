@@ -1,6 +1,6 @@
 import { ApiProperty, ApiSchema } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsString, IsNumber, IsOptional, Min, Max, IsBoolean } from 'class-validator';
+import { IsString, IsNumber, IsOptional, Min, Max, IsBoolean, IsDate } from 'class-validator';
 
 @ApiSchema({ description: 'Rules for adding a log' })
 export class addLogDTO {
@@ -16,6 +16,11 @@ export class addLogDTO {
     @ApiProperty({ example: 'MOVIE', description: 'Type of media (MOVIE, GAME, ALBUM, SHOW)' })
     @IsString()
     type: string;
+
+    @ApiProperty({ example: 'null', description: 'Season number for TV shows, null for other media types' })
+    @IsOptional()
+    @IsNumber()
+    seasonId?: number;
 
     //Activity_Log
     @ApiProperty({ example: 'WATCHED', description: 'Status of the media (WATCHED, COMPLETED)' })
@@ -42,10 +47,10 @@ export class addLogDTO {
     @IsString()
     comment?: string;
 
-    @ApiProperty({ example: '2024-06-01T20:00:00Z', description: 'Date and time when the media was watched' })
+    @ApiProperty({ example: '2024-06-01T20:00:00Z',description: 'Date and time when the media was watched' })
     @IsOptional()
     @Type(() => Date)
-    @IsString()
-    watchedAt?: string;
+    @IsDate()
+    watchedAt?: Date;
 
 }

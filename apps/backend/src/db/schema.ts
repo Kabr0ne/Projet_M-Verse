@@ -1,6 +1,7 @@
 import { create } from 'axios';
 import { desc } from 'drizzle-orm';
 import { pgTable, uuid, text, varchar, timestamp, unique, doublePrecision, boolean, integer } from 'drizzle-orm/pg-core';
+import { title } from 'process';
 
 export const users = pgTable('users', {
   id: uuid('id').primaryKey().defaultRandom(),
@@ -28,6 +29,7 @@ export const activityLogs = pgTable('activity_logs', {
   id: uuid('id').primaryKey().defaultRandom(),
   userId: uuid('user_id').references(() => users.id).notNull(),
   mediaId: uuid('media_id').references(() => media.id).notNull(),
+  seasonId: uuid('season_id').references(() => seasons_tvshows.id),
   status: varchar('status'),
   rating: doublePrecision('rating'),
   comment: text('comment'),
@@ -58,10 +60,22 @@ export const userMediaCollections = pgTable('user_media_collections', {
   id: uuid('id').primaryKey().defaultRandom(),
   userId: uuid('user_id').references(() => users.id).notNull(),
   mediaId: uuid('media_id').references(() => media.id).notNull(),
+  seasonId: uuid('season_id').references(() => seasons_tvshows.id, { onDelete: 'cascade' }),
   status: varchar('status'),
   rating: doublePrecision('rating'),
   comment: text('comment'),
   updatedAt: timestamp('updated_at').defaultNow(),
 }, (t) => ({
-  unq: unique().on(t.userId, t.mediaId),
+  unq: unique().on(t.userId, t.mediaId, t.seasonId),
+}));
+
+export const seasons_tvshows = pgTable('seasons_tvshows', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  mediaId: uuid('media_id').references(() => media.id, { onDelete: 'cascade' }).notNull(),
+  title: text('title').notNull(),
+  seasonNumber: integer('season_number').notNull(),
+  episodes: integer('episodes').notNull(),
+  posterUrl: text('poster_url'),
+}, (t) => ({
+  unq: unique().on(t.mediaId, t.seasonNumber),
 }));

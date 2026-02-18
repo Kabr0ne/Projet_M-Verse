@@ -9,16 +9,27 @@ import { TmdbService } from './tmdb/tmdb.service';
 export class SearchController {
     constructor(private readonly tmdbService: TmdbService) {}
 
-    @Get('tmdb')
+    @Get('tmdb/movie')
     @ApiOperation({ summary: 'Search for movies using the TMDB API' })
     async searchTMDB(@Query('title') title: string) {
         return this.tmdbService.searchMovies(title);
     }
 
-    @Get('tmdb/:externalId')
+    @Get('tmdb/movie/:externalId')
     @ApiOperation({ summary: 'Get details for a specific movie using an TMDB ID' })
     async getMovieDetails(@Query('externalId') externalId: string) {
         return this.tmdbService.getMovieDetails(externalId);
     }
 
+    @Get('tmdb/show')
+    @ApiOperation({ summary: 'Search for TV shows using the TMDB API' })
+    async searchTVShows(@Query('title') title: string) {
+        return this.tmdbService.searchTVShows(title);
+    }
+
+    @Get('tmdb/show/:externalId')
+    @ApiOperation({ summary: 'Get details for a specific TV show using an TMDB ID' })
+    async getTVShowDetails(@Query('externalId') externalId: string) {
+        return this.tmdbService.getTVShowDetails(externalId);
+    }
 }

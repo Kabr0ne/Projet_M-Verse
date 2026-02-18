@@ -1,13 +1,13 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { DrizzleService } from '../db/drizzle.service';
-import { media, activityLogs, lists, listItems, userMediaCollections, } from '../db/schema';
+import { media, activityLogs, lists, listItems, userMediaCollections, seasons_tvshows } from '../db/schema';
 import { addLogDTO } from './DTO/add_log.dto';
 import { updateLogDTO } from './DTO/update_log.dto';
 import { createListDTO } from './DTO/create_list.dto';
 import { addMediaToListDTO } from './DTO/add_media_list.dto';
 import { eq, desc, and, sql, is } from 'drizzle-orm';
 import { TmdbService } from './tmdb/tmdb.service';
-import { log } from 'console';
+
 
 
 @Injectable()
@@ -22,9 +22,10 @@ export class MediaService {
         let posterUrl: string | null;
         let runtime: number;
         let genres: string;
+        let rawSeasons: any[] = [];
 
-        switch (addMediaDto.provider) {
-            case 'TMDB':
+        switch (addMediaDto.type) {
+            case 'MOVIE':
                 try {
                     const details = await this.tmdbService.getMovieDetails(addMediaDto.externalId);
                     title = details.title;
@@ -36,12 +37,28 @@ export class MediaService {
                     throw new InternalServerErrorException('Failed to fetch media details from TMDB');
                 }
                 break;
+            case 'SHOW':
+            try {
+                const details = await this.tmdbService.getTVShowDetails(addMediaDto.externalId);
+                title = details.title;
+                posterUrl = details.posterUrl;
+                genres = details.genres;
+                runtime = 0;
+                rawSeasons = (details as any).seasons || []; 
+            } catch (error) {
+                console.error('Error fetching TV show details from TMDB:', error);
+                throw new InternalServerErrorException('Failed to fetch TV show details from TMDB');
+            }
+            break;
+                    
+
+                    
             //Future cases for RAWG and LASTFM will go here
             default:
                 throw new InternalServerErrorException('Unsupported media provider');
         }
 
-        return { title, posterUrl, runtime, genres };
+        return { title, posterUrl, runtime, genres, rawSeasons };
     }
 
     async UpsertMedia(logData: addLogDTO | addMediaToListDTO, validMedia: any) {
@@ -67,6 +84,28 @@ export class MediaService {
                 .returning();
         return Media;
     }
+    async UpsertSeasons(mediaId: string, seasonsData: any[]) {
+        if (!seasonsData || seasonsData.length === 0) return;
+
+        const seasonsToInsert = seasonsData.map((s) => ({
+            mediaId: mediaId,
+            title: s.name || `Saison ${s.season_number}`,
+            seasonNumber: s.season_number,
+            episodes: s.episode_count || 0,
+            posterUrl: s.poster_path ? `https://image.tmdb.org/t/p/w500${s.poster_path}` : null,
+        }));
+
+        await this.drizzle.db.insert(seasons_tvshows)
+            .values(seasonsToInsert)
+            .onConflictDoUpdate({
+                target: [seasons_tvshows.mediaId, seasons_tvshows.seasonNumber],
+                set: {
+                    episodes: sql`EXCLUDED.episodes`,
+                    posterUrl: sql`EXCLUDED.poster_url`,
+                    title: sql`EXCLUDED.title`,
+                },
+            });
+}
 
     //Activity Log Methods
     async addLog(userId: string, logData: addLogDTO) {
@@ -74,19 +113,35 @@ export class MediaService {
             const validMedia = await this.checkMediaValidity(logData);
             const Media = await this.UpsertMedia(logData, validMedia);
 
+    
+            let targetSeasonUuid: string | null = null;
 
-            const [existingLog] = await this.drizzle.db.select()
-                .from(userMediaCollections)
-                .where(and(eq(userMediaCollections.userId, userId),eq(userMediaCollections.mediaId, Media.id)))
-                .limit(1);
+            if (logData.type === 'SHOW' || logData.type === 'TV_SHOW') {
+                await this.UpsertSeasons(Media.id, (validMedia as any).rawSeasons);
+                
+                if (logData.seasonId !== undefined && logData.seasonId !== null) {
+                    targetSeasonUuid = await this.getSeasonUuid(Media.id, logData.seasonId);
+                }
+            }
 
-            const alreadyExists = existingLog?.status === 'WATCHED' || existingLog?.status === 'PLAYED' || existingLog?.status === 'COMPLETED';
+
+            const [existingEntry] = await this.drizzle.db.select()
+            .from(userMediaCollections)
+            .where(and(
+                eq(userMediaCollections.userId, userId),
+                eq(userMediaCollections.mediaId, Media.id),
+                targetSeasonUuid ? eq(userMediaCollections.seasonId, targetSeasonUuid) : sql`${userMediaCollections.seasonId} IS NULL`
+            ))
+            .limit(1);
+
+            const alreadyExists = existingEntry?.status === 'WATCHED' || existingEntry?.status === 'PLAYED' || existingEntry?.status === 'COMPLETED';
 
  
             const [NewLog] = await this.drizzle.db.insert(activityLogs)
                 .values({
                     userId: userId,
                     mediaId: Media.id,
+                    seasonId: targetSeasonUuid,
                     status: logData.status,
                     rewatched: alreadyExists ? true : logData.rewatched,
                     liked: logData.liked,
@@ -100,13 +155,14 @@ export class MediaService {
                 .values({
                     userId: userId,
                     mediaId: Media.id,
+                    seasonId: targetSeasonUuid,
                     status: logData.status,
                     rating: logData.rating,
                     comment: logData.comment,
                     updatedAt: new Date(),
                 })
                 .onConflictDoUpdate({
-                    target: [userMediaCollections.userId, userMediaCollections.mediaId],
+                    target: [userMediaCollections.userId, userMediaCollections.mediaId, userMediaCollections.seasonId],
                     set: {
                         status: logData.status,
                         rating: logData.rating,
@@ -331,6 +387,10 @@ export class MediaService {
             rating: userMediaCollections.rating,
             comment: userMediaCollections.comment,
             updatedAt: userMediaCollections.updatedAt,
+            seasonInfo: {
+            title: seasons_tvshows.title,
+            number: seasons_tvshows.seasonNumber,
+            },
             MediaInfo: {
                 id: media.id,
                 title: media.title,
@@ -342,6 +402,7 @@ export class MediaService {
         })
         .from(userMediaCollections)
         .innerJoin(media, eq(userMediaCollections.mediaId, media.id))
+        .leftJoin(seasons_tvshows, eq(userMediaCollections.seasonId, seasons_tvshows.id))
         .where(eq(userMediaCollections.userId, userId))
         .orderBy(desc(userMediaCollections.updatedAt));
     }
@@ -353,5 +414,20 @@ export class MediaService {
             eq(userMediaCollections.mediaId, mediaId)
         )).returning();
     }
-}                                      
+                                      
 
+    async getSeasonUuid(mediaId: string, seasonNumber: number): Promise<string> {
+        const [season] = await this.drizzle.db.select({ id: seasons_tvshows.id })
+            .from(seasons_tvshows)
+            .where(and(
+                eq(seasons_tvshows.mediaId, mediaId),
+                eq(seasons_tvshows.seasonNumber, seasonNumber)
+            ))
+            .limit(1);
+        
+        if (!season) {
+            throw new InternalServerErrorException(`Saison ${seasonNumber} introuvable pour ce média`);
+        }
+        return season.id;
+    }
+}
