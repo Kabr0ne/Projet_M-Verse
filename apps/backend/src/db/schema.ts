@@ -34,7 +34,7 @@ export const activityLogs = pgTable('activity_logs', {
   rewatched: boolean('rewatched'),
   liked: boolean('liked'),
   createdAt: timestamp('created_at').defaultNow(),
-  watchedAt: timestamp('watched_at'),
+  watchedAt: timestamp('watched_at').defaultNow(),
 });
 
 

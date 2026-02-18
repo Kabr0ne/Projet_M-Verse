@@ -92,6 +92,7 @@ export class MediaService {
                     liked: logData.liked,
                     rating: logData.rating,
                     comment: logData.comment,
+                    watchedAt: logData.watchedAt ? new Date(logData.watchedAt) : new Date(),
                 })
                 .returning();
 
@@ -119,7 +120,6 @@ export class MediaService {
                 message: 'Log added successfully',
                 log: NewLog,
                 media: Media,
-                isRewatch: alreadyExists
             };
         } catch (error) {
             console.error('Error adding log:', error);
@@ -344,6 +344,14 @@ export class MediaService {
         .innerJoin(media, eq(userMediaCollections.mediaId, media.id))
         .where(eq(userMediaCollections.userId, userId))
         .orderBy(desc(userMediaCollections.updatedAt));
+    }
+
+    async removeFromCollection(userId: string, mediaId: string) {
+        return this.drizzle.db.delete(userMediaCollections)
+        .where(and(
+            eq(userMediaCollections.userId, userId),
+            eq(userMediaCollections.mediaId, mediaId)
+        )).returning();
     }
 }                                      
 

@@ -1,4 +1,4 @@
-import { UseGuards, Request, Get, Query} from '@nestjs/common';
+import { UseGuards, Request, Get, Delete, Query} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { Controller } from '@nestjs/common';
@@ -18,6 +18,13 @@ export class CollectionController {
     async getUserCollection(@Request() req) {
         const userId = req.user.userId; //From JWT payload
         return this.mediaService.getMyCollection(userId);
+    }
+
+    @Delete('remove')
+    @ApiOperation({ summary: 'Remove media from user collection' })
+    async removeMediaFromCollection(@Request() req, @Query('mediaId') mediaId: string) {
+        const userId = req.user.userId;
+        return this.mediaService.removeFromCollection(userId, mediaId);
     }
 
 }
