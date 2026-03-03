@@ -38,6 +38,7 @@ export class MediaService {
                 }
                 break;
             case 'SHOW':
+            case 'TV_SHOW':
             try {
                 const details = await this.tmdbService.getTVShowDetails(addMediaDto.externalId);
                 title = details.title;
