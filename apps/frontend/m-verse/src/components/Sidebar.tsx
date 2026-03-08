@@ -7,9 +7,8 @@ import styles from './Sidebar.module.css';
 import { useState } from 'react';
 
 const MENU_ITEMS = [
-  { label: 'Accueil', href: '/', icon: '/icons/home_icon.png' },
-  { label: 'Recherche', href: '/search', icon: '/icons/search_icon.png' },
-  { label: 'Ma Collection', href: '/collection', icon: '/icons/collection_icon.png' },
+  { label: 'Home', href: '/', icon: '/icons/home_icon.png' },
+  { label: 'My Collection', href: '/collection', icon: '/icons/collection_icon.png' },
 ];
 
 export default function Sidebar() {
