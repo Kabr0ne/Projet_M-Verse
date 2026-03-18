@@ -14,6 +14,16 @@ const MENU_ITEMS = [
 export default function Sidebar() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+  const [isLogged, setIsLogged] = useState(false);
+  
+  function handleAuth(){
+    if(isLogged == true){
+      setIsLogged(false);
+    }
+    else{
+      setIsLogged(true);
+    }
+  }
 
   return (
     <>
@@ -37,10 +47,21 @@ export default function Sidebar() {
                   </div>
 
                   <span className={styles.linkLabel}>{item.label}</span>
+                 
                 </Link>
               </li>
             );
           })}
+          <li>
+            <button className={styles.link} onClick={handleAuth}>
+              <div className={styles.iconWrapper}>
+                <Image 
+                  src={"/icons/login_logo.png"} alt="" width={24}  height={24} />
+              </div>
+              <span className={styles.linkLabel}>{isLogged ? 'Logout' : 'Login'}</span>
+            </button>
+          </li>
+
         </ul>
       </nav>
       

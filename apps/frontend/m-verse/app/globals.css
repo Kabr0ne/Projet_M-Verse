@@ -16,3 +16,7 @@ main {
   position: relative;
   z-index: 0;
 }
+
+.footer{
+  text-align: center;
+}
