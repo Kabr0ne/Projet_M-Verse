@@ -11,7 +11,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {children}
         </main>
         
-        <footer>© 2026 M-Verse</footer>
+        <footer className="footer">© 2026 M-Verse</footer>
       </body>
     </html>
   )

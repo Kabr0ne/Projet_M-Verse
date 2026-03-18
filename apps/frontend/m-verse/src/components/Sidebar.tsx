@@ -7,14 +7,23 @@ import styles from './Sidebar.module.css';
 import { useState } from 'react';
 
 const MENU_ITEMS = [
-  { label: 'Accueil', href: '/', icon: '/icons/home_icon.png' },
-  { label: 'Recherche', href: '/search', icon: '/icons/search_icon.png' },
-  { label: 'Ma Collection', href: '/collection', icon: '/icons/collection_icon.png' },
+  { label: 'Home', href: '/', icon: '/icons/home_icon.png' },
+  { label: 'My Collection', href: '/collection', icon: '/icons/collection_icon.png' },
 ];
 
 export default function Sidebar() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+  const [isLogged, setIsLogged] = useState(false);
+  
+  function handleAuth(){
+    if(isLogged == true){
+      setIsLogged(false);
+    }
+    else{
+      setIsLogged(true);
+    }
+  }
 
   return (
     <>
@@ -38,10 +47,21 @@ export default function Sidebar() {
                   </div>
 
                   <span className={styles.linkLabel}>{item.label}</span>
+                 
                 </Link>
               </li>
             );
           })}
+          <li>
+            <button className={styles.link} onClick={handleAuth}>
+              <div className={styles.iconWrapper}>
+                <Image 
+                  src={"/icons/login_logo.png"} alt="" width={24}  height={24} />
+              </div>
+              <span className={styles.linkLabel}>{isLogged ? 'Logout' : 'Login'}</span>
+            </button>
+          </li>
+
         </ul>
       </nav>
       

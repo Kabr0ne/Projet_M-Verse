@@ -10,7 +10,8 @@
   
   box-shadow: 0 8px 32px rgba(0,0,0,0.3);
   top: 30px;
-  left: 50px;
+  left: 50%;
+  margin-left: -31.55%;
   width: 400px;
 
   display: flex;
@@ -25,7 +26,8 @@
 
 .toggleBtn {
   top: 30px;
-  left: 50px;
+  left: 50%;
+  margin-left: -31.55%;
   width: 40px;
   height: 40px;
   position: fixed;
