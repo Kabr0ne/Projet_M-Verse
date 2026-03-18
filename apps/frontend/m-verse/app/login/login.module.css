@@ -1,0 +1,66 @@
+.formContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 16px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.18);
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+
+    width: 600px;
+    margin: auto;
+    margin-top: 50px;
+    padding: 30px;
+    height: 400px;
+
+    overflow: hidden;
+    
+}
+.logo{
+    width: 300px;
+    margin-top: 20px;
+}
+.input {
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50px;
+    padding: 5px 10px;
+    width: 400px;
+    margin: 30px auto;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.query {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: white;
+    padding: 12px 20px;
+    font-size: 16px;
+    font-family: 'Inter', sans-serif;
+}
+
+.submitButton{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(130, 221, 84, 1);
+
+    border: 1px solid rgba(130, 221, 84, 0.2);
+    border-radius: 20px;
+    padding: 5px 10px;
+    margin: 30px auto;
+    height: 40px;
+    width: 100px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    color: white;
+    cursor: pointer;
+}
