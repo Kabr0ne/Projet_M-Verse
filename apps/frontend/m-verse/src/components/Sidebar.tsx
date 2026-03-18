@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import styles from './Sidebar.module.css';
 import { useState } from 'react';
+import { useAuth } from '@/lib/AuthHandler';
 
 const MENU_ITEMS = [
   { label: 'Home', href: '/', icon: '/icons/home_icon.png' },
@@ -14,16 +15,7 @@ const MENU_ITEMS = [
 export default function Sidebar() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
-  const [isLogged, setIsLogged] = useState(false);
-  
-  function handleAuth(){
-    if(isLogged == true){
-      setIsLogged(false);
-    }
-    else{
-      setIsLogged(true);
-    }
-  }
+  const { user, login, logout } = useAuth();
 
   return (
     <>
@@ -43,7 +35,7 @@ export default function Sidebar() {
               <li key={item.href}>
                 <Link href={item.href} className={`${styles.link} ${isActive ? styles.active : ''}`} onClick={() => setIsOpen(false)}>
                   <div className={styles.iconWrapper}>
-                    <Image   src={item.icon}   alt=""   width={24}   height={24} className={styles.iconImg}/>
+                    <Image src={item.icon} alt="" width={24} height={24} className={styles.iconImg}/>
                   </div>
 
                   <span className={styles.linkLabel}>{item.label}</span>
@@ -53,15 +45,18 @@ export default function Sidebar() {
             );
           })}
           <li>
-            <button className={styles.link} onClick={handleAuth}>
-              <div className={styles.iconWrapper}>
-                <Image 
-                  src={"/icons/login_logo.png"} alt="" width={24}  height={24} />
-              </div>
-              <span className={styles.linkLabel}>{isLogged ? 'Logout' : 'Login'}</span>
-            </button>
+            {user.loggedIn ? ( 
+              <button onClick={logout} className={styles.link}>
+                <Image src="/icons/login_logo.png" alt="logo" width={24} height={24} className={styles.iconImg}/>
+                <span className={styles.linkLabel}>Logout</span>
+              </button>
+              ) : (
+              <Link href="/login" className={`${styles.link} ${pathname == "/login" ? styles.active : ''}`} onClick={() => setIsOpen(false)}>
+                <Image src="/icons/login_logo.png" alt="logo" width={24} height={24} className={styles.iconImg}/>
+                <span className={styles.linkLabel}>Login</span>
+              </Link>
+            )}
           </li>
-
         </ul>
       </nav>
       
