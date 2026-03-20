@@ -209,3 +209,127 @@
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     color: #33ff00;
 }
+
+
+.DetailOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+
+}
+
+.DetailContent {
+  -webkit-backdrop-filter: blur(15px);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50px;
+  border: 1px solid #333;
+  border-radius: 15px;
+  padding: 25px;
+  width: 1000px;
+  color: white;
+}
+
+.DetailLayout {
+  display: flex;
+  gap: 20px;
+}
+
+.DetailPoster {
+  width: 150px;
+  height: auto;
+  border-radius: 8px;
+}
+
+.DetailInfo {
+  flex: 1;
+  text-align: left;
+}
+
+.overview {
+  font-size: 0.9rem;
+  color: #ccc;
+  margin: 10px 0;
+}
+
+.meta {
+  color: #8A2BE2; 
+  font-weight: bold;
+  display: flex;
+  gap: 10px;
+}
+
+.logForm {
+    display: flex;
+    gap: 40px;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.formColumnLeft {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 140px;
+    align-items: stretch;
+}
+
+.formColumnRight {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.inputGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.inputGroup label, .formColumnRight label {
+    font-size: 11px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.5);
+    letter-spacing: 1px;
+}
+
+
+.ratingInput, .heart, .heartActive, .sendBtn, .reviewTextarea {
+    box-sizing: border-box;
+    width: 100% !important;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    color: white;
+    padding: 12px;
+    font-family: inherit;
+}
+
+.ratingInput { text-align: center; font-weight: bold; font-size: 16px; }
+
+.reviewTextarea {
+    height: 100%;
+    min-height: 140px;
+    resize: none;
+}
+
+.heart, .heartActive {
+    font-size: 20px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.heartActive { background: rgba(255, 0, 0, 0.15); border-color: rgba(255, 0, 0, 0.3); }
+
+.sendBtn {
+    background: #4e64e0;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+}
+

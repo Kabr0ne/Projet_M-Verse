@@ -45,6 +45,9 @@ export class TmdbService {
             runtime: data.runtime,
             genres: data.genres.map((g) => g.name).join(', '),
             plot: data.overview,
+            vote_average: data.vote_average,
+            release_date: data.release_date,
+
         };
     }
 
