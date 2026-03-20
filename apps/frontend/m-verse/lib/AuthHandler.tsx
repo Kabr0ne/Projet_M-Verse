@@ -5,24 +5,27 @@ import api from '@/lib/api';
 const AuthContext = createContext<any>(null);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-    const [user, setUser] = useState({ loggedIn: false });
+    const [user, setUser] = useState({ loggedIn: false, username: '' });
 
     useEffect(() => {
         const token = localStorage.getItem('token');
-        if (token) {
-            setUser({ loggedIn: true});
+        const stockedName = localStorage.getItem('username');
+        if (token && stockedName) {
+            setUser({ loggedIn: true, username: stockedName });
         }
     }, []);
 
     const login = async (email: string, password: string) => {
         const response = await api.post('/auth/login', { email, password });
         localStorage.setItem('token', response.data.access_token);
-        setUser({ loggedIn: true });
+        localStorage.setItem('username', response.data.user.username);
+        setUser({ loggedIn: true, username: response.data.user.username });
     }
 
     const logout = () => {
         localStorage.removeItem('token');
-        setUser({ loggedIn: false });
+        localStorage.removeItem('username');
+        setUser({ loggedIn: false, username: '' });
     }
     
     return (
