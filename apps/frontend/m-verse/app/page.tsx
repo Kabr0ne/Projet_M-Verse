@@ -3,6 +3,7 @@
 import styles from './page.module.css';
 import { useState, useEffect, use } from 'react';
 import api from '@/lib/api';
+import { useAuth } from '@/lib/AuthHandler';
 
 interface SearchResult {
   id: number;
@@ -35,6 +36,7 @@ const mediaThumbnails = [
   { id: 14, href: '/img/spiderman3.jpg' },
   { id: 15, href: '/img/the-girl-who-leapt-through-time.jpg' },
   { id: 16, href: '/img/whiplash.jpg' },
+  { id: 17, href: '/img/JVLIVS.jpg' },
 ];
 
 export default function MainPage() {
@@ -43,6 +45,7 @@ export default function MainPage() {
   const [results, setResults] = useState<SearchResult[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
+  const { user } = useAuth();
 
   const performSearch = async () => {
     if(!query) {return}
@@ -87,7 +90,7 @@ export default function MainPage() {
       
       <div style={{ padding: '20px', textAlign: 'center' }}>
         <img src="/icons/Logo_M-VERSE.png" alt="M-Verse Logo" style={{ width: '300px', marginBottom: '20px' }} />
-        <p>Welcome on M-Verse, A platform for media tracking and discovery</p>
+        {user.loggedIn ? <div className={styles.usernameContainer}><p>Welcome home</p><p className={styles.username}>{user.username}</p><p>!</p></div> : <p>Welcome on M-Verse, A platform for media tracking and discovery</p>}
         <nav className={styles.typeSelector}>
           {mediaTypes.map((type) => (
             <button key={type.id} className={`${styles.typeButton} ${activeType === type.id ? styles.active : ''}`} 
