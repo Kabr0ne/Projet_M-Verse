@@ -1,0 +1,146 @@
+.logContainer {
+    padding: 60px 140px;
+    width: 1000px;
+    margin: 80px auto 0;
+    min-height: 100vh;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 50px;
+}
+
+.pageTitle {
+  font-family: 'Inter', sans-serif;
+  color: white;
+  font-size: 2.5rem;
+  margin-bottom: 60px;
+  text-align: left;
+  text-shadow: 0 0 20px rgba(138, 43, 226, 0.3);
+}
+
+.monthGroup {
+    display: flex;
+    gap: 40px;
+    margin-bottom: 50px;
+    position: relative;
+}
+
+.monthLabel {
+    min-width: 200px;
+    text-align: right;
+}
+
+.monthLabel span {
+    position: sticky;
+    top: 120px;
+    display: block;
+    font-family: 'Inter', sans-serif;
+    text-transform: uppercase;
+    font-weight: 800;
+    font-size: 13px;
+    letter-spacing: 2px;
+    color: #db4343; 
+    border-right: 2px solid rgba(255, 83, 83, 0.3);
+    padding-right: 20px;
+}
+
+.entriesList {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.logRow {
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding: 10px 20px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 1);
+    transition: all 0.2s ease-in-out;
+}
+
+.logRow:hover {
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateX(10px);
+}
+
+.date {
+    width: 30px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 1);
+    font-size: 18px;
+}
+
+.smallPoster {
+    width: 45px;
+    height: 65px;
+    object-fit: cover;
+    border-radius: 6px;
+    margin: 0 20px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+.title {
+    flex: 1;
+}
+
+.mediaTitle {
+    color: white;
+    font-weight: 500;
+    font-size: 16px;
+    font-family: 'Inter', sans-serif;
+}
+
+.rating {
+    color: #ffcc00;
+    font-size: 20px;
+    font-family: 'Inter', sans-serif;
+    letter-spacing: 2px;
+    margin: 0 25px;
+}
+
+.like {
+    font-size: 18px;
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.2));
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+
+.username {
+        color: #db4343;
+        text-transform: capitalize;
+        font-weight: 700;
+}
+
+
+.loginBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(130, 221, 84, 1);
+
+    border: 1px solid rgba(130, 221, 84, 0.2);
+    border-radius: 20px;
+    padding: 5px 10px;
+    margin: 30px auto;
+    height: 40px;
+    width: 100px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    color: white;
+    cursor: pointer;
+}
+
+.notLoggedInText {
+    color: white;
+    font-size: 18px;
+    font-family: 'Inter', sans-serif;
+    text-align: center;
+    margin-bottom: 20px;
+}

@@ -1,4 +1,4 @@
-import { Get, Query } from '@nestjs/common';
+import { Get, Param, Query } from '@nestjs/common';
 import { ApiOperation, ApiTags } from "@nestjs/swagger";
 import { Controller } from '@nestjs/common';
 import { TmdbService } from './tmdb/tmdb.service';
@@ -17,7 +17,7 @@ export class SearchController {
 
     @Get('tmdb/movie/:externalId')
     @ApiOperation({ summary: 'Get details for a specific movie using an TMDB ID' })
-    async getMovieDetails(@Query('externalId') externalId: string) {
+    async getMovieDetails(@Param('externalId') externalId: string) {
         return this.tmdbService.getMovieDetails(externalId);
     }
 
@@ -29,7 +29,7 @@ export class SearchController {
 
     @Get('tmdb/show/:externalId')
     @ApiOperation({ summary: 'Get details for a specific TV show using an TMDB ID' })
-    async getTVShowDetails(@Query('externalId') externalId: string) {
+    async getTVShowDetails(@Param('externalId') externalId: string) {
         return this.tmdbService.getTVShowDetails(externalId);
     }
 }

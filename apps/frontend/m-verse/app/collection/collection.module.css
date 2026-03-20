@@ -1,0 +1,92 @@
+.container {
+    padding: 60px 120px; 
+    max-width: 1400px;
+    margin: 0 auto;
+    margin-top: 100px;
+    min-height: 100vh;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 50px;
+}
+
+.container h1 {
+    font-family: 'Inter', sans-serif;
+    color: white;
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 50px;
+    letter-spacing: -1px;
+    text-shadow: 0 0 30px rgba(138, 43, 226, 0.5); 
+}
+
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 25px;
+    justify-content: center;
+}
+
+
+.card {
+  background: rgba(68, 63, 63, 0.719);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-8px);
+}
+
+
+.card img {
+    width: 100%;
+    aspect-ratio: 2 / 3; /* Poster Format*/
+    object-fit: cover;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    transition: transform 0.5s ease;
+}
+
+.card p {
+    font-family: 'Inter', sans-serif;
+    color: white;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 12px 8px;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+
+.submitButton{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(130, 221, 84, 1);
+
+    border: 1px solid rgba(130, 221, 84, 0.2);
+    border-radius: 20px;
+    padding: 5px 10px;
+    margin: 30px auto;
+    height: 40px;
+    width: 100px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    color: white;
+    cursor: pointer;
+}
+
+.emptyMessage {
+    grid-column: 1 / -1;
+    color: rgba(255, 255, 255, 0.4);
+    margin-top: 40px;
+}
