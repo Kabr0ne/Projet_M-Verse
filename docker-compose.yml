@@ -13,6 +13,11 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-admin} -d ${DB_NAME:-mverse_db}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   pgadmin:
     image: dpage/pgadmin4
@@ -44,7 +49,10 @@ services:
       - ./apps/backend:/usr/src/app
       - /usr/src/app/node_modules
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+    command: >
+      sh -c "npx drizzle-kit push && npm run start:dev"
 
   frontend:
     build:
@@ -56,7 +64,7 @@ services:
     ports:
       - "3001:3000"
     environment:
-      NEXT_PUBLIC_API_URL: http://192.168.1.28:3000
+      NEXT_PUBLIC_API_URL: http://localhost:3000
     volumes:
       - ./apps/frontend/m-verse:/usr/src/app
       - /usr/src/app/node_modules
