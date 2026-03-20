@@ -7,6 +7,7 @@ import { useAuth } from '@/lib/AuthHandler';
 
 interface SearchResult {
   id: number;
+  externalId: number;
   title: string;
   posterUrl: string;
 }
@@ -70,6 +71,73 @@ export default function MainPage() {
 
   }
 
+
+
+  interface MovieDetails {
+    plot: string;
+    genres: string;
+    runtime: number;
+    title: string;
+    posterUrl: string;
+    release_date: string;
+    vote_average: number;
+  }
+
+  const [selectedMedia, setSelectedMedia] = useState<SearchResult | null>(null);
+  const [details, setDetails] = useState<MovieDetails | null>(null);
+  const [detailsLoading, setDetailsLoading] = useState(false);
+
+  const fetchMovieDetails = async (externalId: number) => {
+  setDetailsLoading(true);
+    try {
+      const res = await api.get(`/media/search/tmdb/movie/${externalId}`);
+      setDetails(res.data);
+    } catch (err) {
+      console.error("Error while trying to get movie details", err);
+    } finally {
+      setDetailsLoading(false);
+    }
+  };
+
+  const [rating, setRating] = useState(5);
+  const [comment, setComment] = useState('');
+  const [liked, setLiked] = useState(false);
+  const [provider, setProvider] = useState('');
+
+  const handleLogSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    switch (activeType) {
+      case 'movie': setProvider('TMDB'); break;
+      case 'tvshow': setProvider('TMDB'); break;
+    }
+
+    if (!user.loggedIn) return alert("Please log in first!");
+
+    const payload = {
+        externalId: String(selectedMedia?.externalId),
+        provider: 'TMDB',
+        type: activeType.toUpperCase(),
+        seasonId: null, //To implement later
+        status: 'WATCHED',
+        rewatched: false,
+        rating: rating,
+        liked: liked,
+        comment: comment,
+      }
+    
+    console.log(payload);
+
+    try {
+      await api.post('/media/logs', payload); 
+      
+      alert("Added to your log!");
+      setSelectedMedia(null);
+      setComment(''); setRating(5); setLiked(false);
+    } catch (err) {
+      alert("Error adding entry.");
+    }
+  };
+
   return (
     <>
       <div className={styles.mediaSideBar1}>
@@ -110,13 +178,63 @@ export default function MainPage() {
         
         <div className={styles.resultsGrid}>
           {results.map((item, index) => (
-                <div key={item.id || index} className={styles.card}>
+                <div key={item.id || index} className={styles.card} onClick={() => {setSelectedMedia(item); fetchMovieDetails(item.externalId);}}>
                   <img src={item.posterUrl} alt={item.title} className={styles.poster} />
                   <strong><p className={styles.titleMovie}>{item.title}</p></strong>
                 </div>
               ))}
         </div>
       </div>
+      {selectedMedia && (
+        <div className={styles.DetailOverlay} onClick={() => { setSelectedMedia(null); setDetails(null); }}>
+          <div className={styles.DetailContent} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.DetailLayout}>
+              <img src={selectedMedia.posterUrl} className={styles.DetailPoster} />
+              
+              <div className={styles.DetailInfo}>
+                <h2>{selectedMedia.title}</h2>
+                
+                {detailsLoading ? (
+                  <p>Loading Details</p>
+                ) : details ? (
+                  <div className={styles.detailsBox}>
+                    <p className={styles.plot}>{details.plot}</p>
+                    <div className={styles.meta}>
+                      <span>📅 {new Date(details.release_date).getFullYear()}</span>
+                      <span>⏱️ {details.runtime} min</span>
+                      <span>⭐ {details.vote_average.toFixed(1)}/10</span>
+                    </div>
+                  </div>
+                ) : null}
+
+                <form onSubmit={handleLogSubmit} className={styles.logForm}>
+                  <div className={styles.formColumnLeft}>
+                    <div className={styles.inputGroup}>
+                      <label>Rating</label>
+                      <input  type="number"  min="0" max="10" step="0.5"  value={rating}  onChange={(e) => setRating(Number(e.target.value))} className={styles.ratingInput}/>
+                    </div>
+
+                    <div className={styles.inputGroup}>
+                      <label>Favorite</label>
+                      <button  type="button"  onClick={() => setLiked(!liked)}  className={liked ? styles.heartActive : styles.heart}>
+                        {liked ? '❤️' : '🤍'}
+                      </button>
+                    </div>
+
+                    <button type="submit" className={styles.sendBtn}>SEND</button>
+                  </div>
+
+                  <div className={styles.formColumnRight}>
+                    <label>Review</label>
+                    <textarea  value={comment}  onChange={(e) => setComment(e.target.value)}  placeholder="What did you think about it?" className={styles.reviewTextarea}/>
+                  </div>
+
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
