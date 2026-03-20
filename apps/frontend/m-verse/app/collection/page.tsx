@@ -39,7 +39,7 @@ export default function CollectionPage() {
 
   return (
     <div className={styles.container}>
-      <h1>Ma Collection</h1>
+      <h1>My Collection</h1>
 
       {user.loggedIn ? (
         <div className={styles.grid}>
@@ -49,7 +49,7 @@ export default function CollectionPage() {
                 <img src={item.MediaInfo.posterUrl} alt={item.MediaInfo.title} />
                 <p>{item.MediaInfo.title}</p>
               </div>
-            ))) : ( <p className={styles.emptyMessage}>Ta collection est vide pour le moment.</p>)}
+            ))) : ( <p className={styles.emptyMessage}>Empty Collection, start adding some media!</p>)}
         </div> ) : (
         <>
           <p>You must be logged in to view your collection.</p>

@@ -10,6 +10,7 @@ import { useAuth } from '@/lib/AuthHandler';
 const MENU_ITEMS = [
   { label: 'Home', href: '/', icon: '/icons/home_icon.png' },
   { label: 'My Collection', href: '/collection', icon: '/icons/collection_icon.png' },
+  { label: 'Log', href: '/log', icon: '/icons/log_icon.png' },
 ];
 
 export default function Sidebar() {
