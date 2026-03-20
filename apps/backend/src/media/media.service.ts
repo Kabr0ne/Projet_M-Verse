@@ -229,7 +229,7 @@ export class MediaService {
                 comment: activityLogs.comment,
                 rewatched: activityLogs.rewatched,
                 liked: activityLogs.liked,
-                createdAt: activityLogs.createdAt,
+                watchedAt: activityLogs.watchedAt,
                 
                 mediaInfo: {
                     title: media.title,
@@ -242,7 +242,7 @@ export class MediaService {
             .from(activityLogs)
             .innerJoin(media, eq(activityLogs.mediaId, media.id))
             .where(eq(activityLogs.userId, userId))
-            .orderBy(desc(activityLogs.createdAt));
+            .orderBy(desc(activityLogs.watchedAt));
             
     }
 
